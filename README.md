@@ -1,8 +1,6 @@
 # SimpleHealthCheck
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/simple_health_check`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A rails engine to return various checks in json format.
 
 ## Installation
 
@@ -16,19 +14,30 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install simple_health_check
-
 ## Usage
 
-TODO: Write usage instructions here
+### Creating an initializer
+And use the following to configure.
+```
+# SimpleHealthCheck::Configuration.mount_at = 'custom_path'
+# SimpleHealthCheck::Configuration.version_file = Rails.root.join('VERSION')
+SimpleHealthCheck::Configuration.configure do |config|
+  config.add_check SimpleHealthCheck::VersionCheck
+end
+```
 
-## Development
+### Adding new checks:
+The default check:
+* SimpleHealthCheck::BasicStatusCheck - returns "status": 1
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Add more checks:
+* SimpleHealthCheck::VersionCheck - reads from "VERSION" file or path with Configuration version_file =
+* SimpleHealthCheck::MysqlCheck - wip
+* SimpleHealthCheck::S3Check - wip
+* SimpleHealthCheck::RedisCheck - wip
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Derive new checks from `SimpleHealthCheck::Base` and write the `call` method.
+
 
 ## Contributing
 
