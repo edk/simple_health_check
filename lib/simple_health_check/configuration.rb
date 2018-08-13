@@ -13,7 +13,6 @@ module SimpleHealthCheck
       end
 
       def add_check klass
-        @memoized_all_checks = nil
         self.all_checks << klass.new
       end
 
