@@ -9,4 +9,3 @@ module SimpleHealthCheck
     end
   end
 end
-
