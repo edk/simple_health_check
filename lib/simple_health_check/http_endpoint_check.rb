@@ -1,4 +1,4 @@
-class SimpleHealthCheck::RedisCheck < SimpleHealthCheck::Base
+class SimpleHealthCheck::HttpEndpointCheck < SimpleHealthCheck::Base
   def call(response:)
     redis_check_proc = SimpleHealthCheck::Configuration.redis_check_proc
     svc_name = "svc_redis"

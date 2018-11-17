@@ -2,7 +2,14 @@ module SimpleHealthCheck
   module Configuration
     class << self
       attr_accessor :mount_at
-      attr_accessor :version_file
+      %w[
+        json_file
+        mysql_check_proc
+        s3_check_proc
+        redis_check_proc
+      ].each do |opt|
+        attr_accessor opt.to_sym
+      end
       attr_accessor :options
       attr_accessor :all_checks
 

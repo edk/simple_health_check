@@ -1,7 +1,14 @@
-require "simple_health_check/version"
-%w[base basic_status_check version_check mysql_check redis_check s3_check].each do |file|
-  require "simple_health_check/#{file}"
+require 'simple_health_check/version'
+require 'simple_health_check/base'
+require 'simple_health_check/basic_status_check'
+
+module SimpleHealthCheck
+  %w[version version_check mysql_check json_file redis_check s3_check].each do |file|
+    classified_string = file.split('_').collect!{ |w| w.capitalize }.join
+    autoload classified_string.to_sym, "simple_health_check/#{file}"
+  end
 end
+
 require "simple_health_check/configuration"
 require "simple_health_check/engine"
 
