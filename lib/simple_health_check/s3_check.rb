@@ -1,7 +1,7 @@
 class SimpleHealthCheck::S3Check < SimpleHealthCheck::Base
-  def call(response:)
-    response.add name: 'svc_s3', status: 1
-    response.status_code = :ok
-    response
+  def initialize service_name: "s3", check_proc: nil, hard_fail: false
+    @service_name = service_name
+    @proc = check_proc || SimpleHealthCheck::Configuration.s3_check_proc
+    @hard_fail = hard_fail
   end
 end
