@@ -12,7 +12,7 @@ class SimpleHealthCheck::HttpEndpointCheck < SimpleHealthCheck::Base
         response.add name: @service_name, status: rv
         response.status_code = :ok
       rescue
-        response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.message
+        response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.to_s
       end
     else
       response.add name: @service_name, status: 'missing_configuration'

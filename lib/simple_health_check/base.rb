@@ -1,5 +1,6 @@
 module SimpleHealthCheck
   class Base
+    attr_reader :service_name
     # derive a check class from this and add your checks.  the passed in response object
     # can set the key (name) and value (status) of the check to run.
     # All the combined checks are returned in a single hash.  Ensure you catch
@@ -38,7 +39,7 @@ module SimpleHealthCheck
           response.status_code = rv
         rescue
           # catch exceptions since we don't want the health-check to bubble all the way to the top
-          response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.message
+          response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.to_s
           response.status_code = :internal_server_error
           response
         end
