@@ -16,7 +16,7 @@ class SimpleHealthCheck::MysqlCheck < SimpleHealthCheck::Base
         response.status_code = rv
       rescue
         # catch exceptions since we don't want the health-check to bubble all the way to the otp
-        response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.message
+        response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.to_s
         response.status_code = :internal_server_error
       end
     else
@@ -28,7 +28,7 @@ class SimpleHealthCheck::MysqlCheck < SimpleHealthCheck::Base
         response.status_code = :ok
       rescue
         response.add name: @service_name, status: :internal_server_error
-        response.add name: "#{@service_name}_error", status: $ERROR_INFO.message
+        response.add name: "#{@service_name}_error", status: $ERROR_INFO.to_s
         response.status_code = :internal_server_error
       end
     end

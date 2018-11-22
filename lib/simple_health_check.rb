@@ -44,9 +44,14 @@ module SimpleHealthCheck
       response = SimpleHealthCheck::Response.new
       overall_status = :ok
       SimpleHealthCheck::Configuration.all_checks.each_with_object(response) do |check, obj|
-        rv = check.call(response: obj)
-        if rv.status.to_s != 'ok' && check.should_hard_fail?
-          overall_status = rv.status
+        begin
+          rv = check.call(response: obj)
+          if rv.status.to_s != 'ok' && check.should_hard_fail?
+            overall_status = rv.status
+          end
+        rescue # catch the error and try to log, but keep going finish all checks
+          response.add name: "#{check.service_name}_severe_error", status: $ERROR_INFO.to_s
+          Rails.logger.error "simple_health_check gem ERROR: #{$ERROR_INFO}"
         end
       end
       response.status = overall_status
