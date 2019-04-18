@@ -25,7 +25,7 @@ module SimpleHealthCheck
           SimpleHealthCheck::VersionCheck
         ]
         added_checks = all_checks.map { |x| x if allowed_checks.include?(x.class) }
-        @simple_checks ||= added_checks | [SimpleHealthCheck::BasicStatus]
+        @simple_checks ||= added_checks | [SimpleHealthCheck::BasicStatus.new]
       end
 
       def all_checks
