@@ -9,17 +9,28 @@ module SimpleHealthCheck
         mount_at
         mysql_check_proc
         s3_check_proc
-        redis_check_proc
+        resque_check_proc
+        scheduler_check_proc
         version_file
+        detailed_description
       ].each do |opt|
         attr_accessor opt.to_sym
       end
 
       attr_accessor :options
 
+      def simple_checks
+        allowed_checks = [
+          SimpleHealthCheck::JsonFile,
+          SimpleHealthCheck::VersionCheck
+        ]
+        added_checks = all_checks.map { |x| x if allowed_checks.include?(x.class) }
+        @simple_checks ||= added_checks | [SimpleHealthCheck::BasicStatus]
+      end
+
       def all_checks
-        @checks ||= [SimpleHealthCheck::BasicStatus]
-        @memoized_all_checks ||= @checks.map do |c|
+        @checks ||= []
+        @all_checks ||= @checks.map do |c|
           c.is_a?(Class) ? c.new : c
         end
       end
@@ -40,6 +51,7 @@ module SimpleHealthCheck
 
     self.mount_at = 'health'
     self.version_file = 'VERSION'
+    self.detailed_description = nil
     self.options = {}
   end
 end

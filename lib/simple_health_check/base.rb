@@ -1,6 +1,9 @@
 module SimpleHealthCheck
   class Base
     attr_reader :service_name
+    attr_reader :response_time
+    attr_reader :type
+    attr_reader :version
     # derive a check class from this and add your checks.  the passed in response object
     # can set the key (name) and value (status) of the check to run.
     # All the combined checks are returned in a single hash.  Ensure you catch
@@ -20,38 +23,11 @@ module SimpleHealthCheck
     #   config.add_check MyCheck.new(data)
     # end
     # ```
-    def initialize service_name: nil, check_proc: nil, hard_fail: false
+    def initialize service_name: nil, check_proc: nil
       @service_name = service_name
       @proc = check_proc
-      @hard_fail = hard_fail
+      @response_time = nil
+      @version = nil
     end
-
-    def should_hard_fail?
-      @hard_fail
-    end
-
-    def call(response:)
-      if @proc && @proc.respond_to?(:call)
-        begin
-          # @proc is a required user-supplied function to see if connection is working.
-          rv = @proc.call
-          response.add name: @service_name, status: rv
-          response.status_code = rv
-        rescue
-          # catch exceptions since we don't want the health-check to bubble all the way to the top
-          response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.to_s
-          response.status_code = :internal_server_error
-          response
-        end
-      else
-        unless @no_config_needed
-          response.add name: @service_name, status: 'missing_configuration'
-          response.status_code = :internal_server_error
-        end
-      end
-
-      response
-    end
-
   end
 end

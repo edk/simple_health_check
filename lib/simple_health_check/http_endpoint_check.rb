@@ -1,23 +1,20 @@
-class SimpleHealthCheck::HttpEndpointCheck < SimpleHealthCheck::Base
-  def initialize service_name: "http_endpoint", check_proc: nil, hard_fail: false
+# Useful for checking other service's health check endpoint
+class SimpleHealthCheck::HttpEndpointCheck < SimpleHealthCheck::BaseNoProc
+  def initialize(service_name: 'http_endpoint', check_proc: nil, url: nil)
     @service_name = service_name
     @proc = check_proc || SimpleHealthCheck::Configuration.http_endpoint_check_proc
-    @hard_fail = hard_fail
+    @type = 'service'
+    @url = url
   end
 
   def call(response:)
-    if @proc && @proc.respond_to?(:call)
-      begin
-        rv = @proc.call
-        response.add name: @service_name, status: rv
-        response.status_code = :ok
-      rescue
-        response.add name: "#{@service_name}_connection_error", status: $ERROR_INFO.to_s
-      end
-    else
-      response.add name: @service_name, status: 'missing_configuration'
+    super do
+      uri = URI(@url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true if @url.include?('https')
+      request = Net::HTTP::Get.new(uri)
+      resp = http.request(request)
+      (resp.read_body['status'] && :ok) || false
     end
-
-    response
   end
 end
