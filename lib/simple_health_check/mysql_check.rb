@@ -3,7 +3,7 @@ class SimpleHealthCheck::MysqlCheck < SimpleHealthCheck::BaseNoProc
     @service_name = service_name
     @proc = check_proc || SimpleHealthCheck::Configuration.mysql_check_proc
     @type = 'internal'
-    @version = version_check || nil
+    @version = version_check rescue nil
   end
 
   def call(response:)
