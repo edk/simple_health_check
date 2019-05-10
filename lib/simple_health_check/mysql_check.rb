@@ -12,7 +12,9 @@ class SimpleHealthCheck::MysqlCheck < SimpleHealthCheck::BaseNoProc
     rescue
       @version = nil
     end
-    super { ActiveRecord::Base.connected? }
+    super do
+      ActiveRecord::Base.connection_pool.with_connection { |con| con.active? } rescue false
+    end
   end
 
   def version_check
