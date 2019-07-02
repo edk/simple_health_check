@@ -22,7 +22,8 @@ module SimpleHealthCheck
       def simple_checks
         allowed_checks = [
           SimpleHealthCheck::JsonFile,
-          SimpleHealthCheck::VersionCheck
+          SimpleHealthCheck::VersionCheck,
+          SimpleHealthCheck::StatsDStatusCheck
         ]
         added_checks = all_checks.map { |x| x if allowed_checks.include?(x.class) }
         @simple_checks ||= added_checks.compact | [SimpleHealthCheck::BasicStatus.new]

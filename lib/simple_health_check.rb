@@ -12,6 +12,7 @@ module SimpleHealthCheck
     resque_check
     scheduler_check
     s3_check
+    stats_d_status_check
     version_check
     version
   ].each do |file|
