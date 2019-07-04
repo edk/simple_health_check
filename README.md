@@ -34,7 +34,7 @@ The class, or in some cases, an instance can also be passed in.
 Simple checks:
 * `SimpleHealthCheck::BasicStatusCheck` - returns "status": 1
 * `SimpleHealthCheck::VersionCheck` - reads from "VERSION" file. Change filename with `SimpleHealthCheck::Configuration.version_file = Rails.root.join('VERSION')`
-* `SimpleHealthCheck::StatsDStatusCheck` - calls statsd.gauge with a value 1. Can be used in cases where the return value of the health check is not monitored.  The gauge name, additional tags, and minimum time in minutes allowed between
+* `SimpleHealthCheck::StatsDStatusCheck` - (requires `statsd-instrument` gem ONLY if this check is used) Calls statsd.gauge with a value 1.  Can be used in cases where the return value of the health check is not monitored.  The gauge name, additional tags, and minimum time in minutes allowed between
 statsd calls (calls to the health check within that interval will not update the gauge) are provided when the check is registered.  In the example the minimum time between setting the gauge is 1 minute,
 the gauge name 'service_health', and version '1.2' as a tag.  The check returns `'pushed statsd': true` if called outside of the set minimum interval, `'pushed statsd': false` if called before the interval has elapsed.
 ```
@@ -42,6 +42,7 @@ SimpleHealthCheck::Configuration.configure do |config|
    config.add_check SimpleHealthCheck::StatsDStatusCheck.new(interval: 1, key_name: 'service_health', tags: ['version: 1.2'])
 end
 ```
+
 
 * `SimpleHealthCheck::JsonFile` - much like the `VersionCheck`, however it reads a static json file and injects it into the returned status.
 
